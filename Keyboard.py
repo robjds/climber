@@ -1,23 +1,9 @@
+
+import movementFunctions
+
 import curses
-
-class robotController:
-  def __init__(self, name):
-    self.name = name
-
-  def forward(self):
-    print(self.name + " forward.")
-
-  def backward(self):
-    print(self.name + " backward.")
-
-  def left(self):
-    print(self.name + " right.")
-
-  def right(self):
-    print(self.name + " right.")
-
-  def stop(self):
-    print(self.name + " stop.")
+# curses.noecho()
+# curses.cbreak()
 
 robot = robotController("Climber")
 
@@ -26,6 +12,8 @@ actions = {
     curses.KEY_DOWN:  robot.backward,
     curses.KEY_LEFT:  robot.left,
     curses.KEY_RIGHT: robot.right,
+    ord('z'):         robot.openfront,
+    ord('x'):         robot.closefront,
     }
 
 def main(window):
@@ -40,6 +28,7 @@ def main(window):
         if key != -1:
             # KEY DOWN
             curses.halfdelay(3)
+            # print(key)
             action = actions.get(key)
             if action is not None:
                 action()
