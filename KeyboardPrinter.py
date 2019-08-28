@@ -1,16 +1,9 @@
 
-from movementFunctions import robotController
+import movementFunctions.py
 
 import curses
 # curses.noecho()
 # curses.cbreak()
-
-def quitter():
-    robot.cleanup() # Stop ranging
-    print 'bye ...'
-
-import atexit
-atexit.register(quitter)
 
 robot = robotController("Climber")
 
