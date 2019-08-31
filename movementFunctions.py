@@ -80,3 +80,13 @@ def cleanup():
     twist = 0
     speed = 0
     updatemotors()
+
+def storeData():
+    # initializing data to be stored
+    for i in range(len(motor_ids)):
+        dynamixelPickle[2*i]    = motors[i].get_present_velocity()
+        dynamixelPickle[2*i+1]  = motors[i].get_present_position()
+    # Its important to use binary mode
+    dbfile = open('examplePickle', 'ab')
+    pickle.dump(dynamixelPickle, dbfile)
+    dbfile.close()

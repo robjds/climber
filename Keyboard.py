@@ -1,5 +1,5 @@
 
-from movementFunctions import robotController
+import  movementFunctions  as robot
 
 import curses
 # curses.noecho()
@@ -11,8 +11,6 @@ def quitter():
 
 import atexit
 atexit.register(quitter)
-
-robot = robotController("Climber")
 
 actions = {
     curses.KEY_UP:    robot.forward,
@@ -27,6 +25,7 @@ actions = {
 def main(window):
     next_key = None
     while True:
+        robot.storeData()
         curses.halfdelay(1)
         if next_key is None:
             key = window.getch()

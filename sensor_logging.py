@@ -14,6 +14,13 @@ def quitter():
     ouputFile.close()
     print 'bye ...'
 
+def loadData():
+    # for reading also binary mode is important
+    dbfile = open('dynamixelPickle', 'rb')
+    dynamixelPickle = pickle.load(dbfile)
+    dbfile.close()
+
+
 import atexit
 atexit.register(quitter)
 
@@ -46,12 +53,9 @@ while True:
     magn = imu.mag
     temp = imu.temp
     acce = imu.accel
-    # outputData = ['{:.3}'.format(currentTime),
-    #               ' {:04.3f}'.format(distance_in_mm/1000),
-    #               " {:.3f}, {:.3f}, {:.3f}".format(*acce),
-    #               ' {:.3f}, {:.3f}, {:.3f}'.format(*gyr),
-    #               ' {:.3f}, {:.3f}, {:.3f}'.format(*magn),
-    #               ' {:.3}'.format(temp)]
+
+    loadData()
+
     outputData = [currentTime,distance_in_mm,temp]
-    outputData.extend(list(acce) + list(gyr)+list(magn))
+    outputData.extend(list(acce) + list(gyr)+list(magn) + dynamixelPickle)
     writer.writerow(outputData)
