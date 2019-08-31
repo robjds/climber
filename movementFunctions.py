@@ -2,49 +2,81 @@
 import RPi.GPIO as GPIO   # Import the GPIO library.
 import time
 
+from dynamixel_helper import DxlHelper
+
+helper = DxlHelper("climber_preset.json")
+motor_ids = [0, 1, 2, 3] # 0 and 1 are the right side, 2 and 3 are the left
+motors = []
+for i in range(len(motor_ids)):
+    motors.append(helper.get_motor(motor_ids[i]))
+    motors[i].set_torque(True)
+
+for i in range(len(motor_ids)):
+    motors[i].set_goal_position(0)
+
+frontServoPin = 15
+backServoPin = 16
+servoHigh = 100*2.25/20/2
+servoLow  = 100*0.75/20/2
+servoMid  = 100*1.5/20/2
+
+speed = 0
+twist = 0
+
 GPIO.setmode(GPIO.BOARD)  # Set Pi to use pin number when referencing GPIO pins.
+print(" starting up.")
+GPIO.setup(frontServoPin, GPIO.OUT)  # Set GPIO pin 12 to output mode.
+frontPWM = GPIO.PWM(frontServoPin, 50)   # Initialize PWM on pwmPin 50Hz frequency
+GPIO.setup(backServoPin, GPIO.OUT)  # Set GPIO pin 12 to output mode.
+backPWM = GPIO.PWM(backServoPin, 50)   # Initialize PWM on pwmPin 50Hz frequency
+frontPWM.start(servoMid)
+backPWM.start(servoMid)
 
-class robotController:
-    frontServoPin = 15
-    backServoPin = 16
-    servoHigh = 100*2.25/20/2
-    servoLow  = 100*0.75/20/2
-    servoMid  = 100*1.5/20/2
+def updatemotors():
+    for i in range(len(motor_ids)):
+        if i > 1:
+            motors[i].set_goal_velocity(speed-twist)
+        else:
+            motors[i].set_goal_velocity(speed+twist)
 
-    def __init__(self, name):
-        self.name = name
-        print(self.name + " starting up.")
-        GPIO.setup(self.frontServoPin, GPIO.OUT)  # Set GPIO pin 12 to output mode.
-        self.frontPWM = GPIO.PWM(self.frontServoPin, 50)   # Initialize PWM on pwmPin 50Hz frequency
-        GPIO.setup(self.backServoPin, GPIO.OUT)  # Set GPIO pin 12 to output mode.
-        self.backPWM = GPIO.PWM(self.backServoPin, 50)   # Initialize PWM on pwmPin 50Hz frequency
-        self.frontPWM.start(self.servoMid)
-        self.backPWM.start(self.servoMid)
+def forward():
+    print("Forward.")
+    speed += 10
+    updatemotors()
 
-    def forward(self):
-        print(self.name + " forward.")
+def backward():
+    print("Backward.")
+    speed -= 10
+    updatemotors()
 
-    def backward(self):
-        print(self.name + " backward.")
+def left():
+    print("Left.")
+    twist -= 10
+    updatemotors()
 
-    def left(self):
-        print(self.name + " right.")
+def right():
+    print("Right.")
+    twist -= 10
+    updatemotors()
 
-    def right(self):
-        print(self.name + " right.")
+def stop():
+    print("Stop.")
+    twist = 0
+    speed = 0
+    updatemotors()
 
-    def stop(self):
-        print(self.name + " stop.")
+def openfront():
+    print("Opening front legs.")
+    frontPWM.ChangeDutyCycle(servoHigh)
 
-    def openfront(self):
-        print(self.name + " opening frontlegs.")
-        self.frontPWM.ChangeDutyCycle(self.servoHigh)
+def closefront():
+    print("Closing front legs.")
+    frontPWM.ChangeDutyCycle(servoLow)
 
-    def closefront(self):
-        print(self.name + " closing frontlegs.")
-        self.frontPWM.ChangeDutyCycle(self.servoLow)
-
-    def cleanup(self):
-        self.frontPWM.stop()
-        self.backPWM.stop()
-        GPIO.cleanup()                     # resets GPIO ports used back to input mode
+def cleanup():
+    frontPWM.stop()
+    backPWM.stop()
+    GPIO.cleanup()       # resets GPIO ports used back to input mode
+    twist = 0
+    speed = 0
+    updatemotors()

@@ -21,6 +21,7 @@ actions = {
     curses.KEY_RIGHT: robot.right,
     ord('z'):         robot.openfront,
     ord('x'):         robot.closefront,
+    ord('s'):         robot.stop,
     }
 
 def main(window):
@@ -43,6 +44,6 @@ def main(window):
             while next_key == key:
                 next_key = window.getch()
             # KEY UP
-            robot.stop()
+            # robot.stop()
 
 curses.wrapper(main)
