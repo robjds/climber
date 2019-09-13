@@ -4,8 +4,8 @@
   "protocol versions":[ 2.0 ],
     "motors":[
         {
-            "id": 2,
-            "alias": "frontLeft",
+            "id": 1,
+            "alias": "frontRight",
             "model": "XL430-W250"
         }
     ]
