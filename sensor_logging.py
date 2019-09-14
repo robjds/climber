@@ -11,8 +11,11 @@ import time
 
 def quitter():
     tof.stop_ranging() # Stop ranging
+    print 'Sensors off, writing data to file...'
+    for i in range(len(dataAccumulator)):
+        writer.writerow(dataAccumulator[i])
     ouputFile.close()
-    print 'bye ...'
+    print '...tschuess!'
 
 def loadData():
     # for reading also binary mode is important
@@ -45,7 +48,7 @@ imu = mpu9250()
 
 print 'log started'
 startTime = time.time()
-
+dataAccumulator = []
 while True:
     currentTime = time.time() - startTime
     distance_in_mm = tof.get_distance() # Grab the range in mm
@@ -58,4 +61,4 @@ while True:
 
     outputData = [currentTime,distance_in_mm,temp]
     outputData.extend(list(acce) + list(gyr)+list(magn) + dynamixelPickle)
-    writer.writerow(outputData)
+    dataAccumulator.append(outputData)

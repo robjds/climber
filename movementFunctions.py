@@ -4,10 +4,11 @@ import time
 
 from dynamixel_helper import DxlHelper
 
-helper = DxlHelper("climber_preset.json")
-motor_ids = [0, 1, 2, 3] # 0 and 1 are the right side, 2 and 3 are the left
+motor_ids = [1, 2, 3, 4] # 1 = frontLeft, 2 = frontRight, 3 = backLeft, 4 = backRight,
 motors = []
+
 for i in range(len(motor_ids)):
+    helper = DxlHelper("climber_preset%d.json" % motor_ids[i])
     motors.append(helper.get_motor(motor_ids[i]))
     motors[i].set_torque(True)
 
