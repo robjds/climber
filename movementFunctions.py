@@ -6,14 +6,20 @@ from dynamixel_helper import DxlHelper
 
 motor_ids = [1, 2, 3, 4] # 1 = frontLeft, 2 = frontRight, 3 = backLeft, 4 = backRight,
 motors = []
+helpers = []
 
 for i in range(len(motor_ids)):
-    helper = DxlHelper("climber_preset%d.json" % motor_ids[i])
-    motors.append(helper.get_motor(motor_ids[i]))
+    helpers.append(DxlHelper("climber_preset%d.json" % motor_ids[i]))
+    motors.append(helpers[i].get_motor(motor_ids[i]))
     motors[i].set_torque(True)
 
 for i in range(len(motor_ids)):
     motors[i].set_goal_position(0)
+    motors[i].set_torque(False)
+    motors[i].set_operating_mode(1)
+    motors[i].set_torque(True)
+
+
 
 frontServoPin = 15
 backServoPin = 16
@@ -23,6 +29,7 @@ servoMid  = 100*1.5/20/2
 
 speed = 0
 twist = 0
+speedunit = 100
 
 GPIO.setmode(GPIO.BOARD)  # Set Pi to use pin number when referencing GPIO pins.
 print(" starting up.")
@@ -35,33 +42,40 @@ backPWM.start(servoMid)
 
 def updatemotors():
     for i in range(len(motor_ids)):
-        if i > 1:
-            motors[i].set_goal_velocity(speed-twist)
+        if i % 2 == 0: # even numbered motors on right side
+            motors[i].set_goal_velocity(-(speed-twist))
         else:
             motors[i].set_goal_velocity(speed+twist)
 
 def forward():
-    print("Forward.")
-    speed += 10
+    global speed
+    speed += speedunit
     updatemotors()
+    print("Forward at %d." % speed)
+
 
 def backward():
-    print("Backward.")
-    speed -= 10
+    global speed
+    speed -= speedunit
     updatemotors()
+    print("Backward at %d." % speed)
 
 def left():
     print("Left.")
-    twist -= 10
+    global twist
+    twist += speedunit
     updatemotors()
 
 def right():
     print("Right.")
-    twist -= 10
+    global twist
+    twist -= speedunit
     updatemotors()
 
 def stop():
     print("Stop.")
+    global speed
+    global twist
     twist = 0
     speed = 0
     updatemotors()
@@ -74,13 +88,23 @@ def closefront():
     print("Closing front legs.")
     frontPWM.ChangeDutyCycle(servoLow)
 
+def openback():
+    print("Opening front legs.")
+    backPWM.ChangeDutyCycle(servoHigh)
+
+def closeback():
+    print("Closing front legs.")
+    backPWM.ChangeDutyCycle(servoLow)
+
 def cleanup():
     frontPWM.stop()
     backPWM.stop()
     GPIO.cleanup()       # resets GPIO ports used back to input mode
-    twist = 0
-    speed = 0
-    updatemotors()
+    # global speed
+    # global twist
+    # twist = 0
+    # speed = 0
+    # updatemotors()
 
 def storeData():
     # initializing data to be stored

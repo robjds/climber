@@ -19,13 +19,15 @@ actions = {
     curses.KEY_RIGHT: robot.right,
     ord('z'):         robot.openfront,
     ord('x'):         robot.closefront,
-    ord('s'):         robot.stop,
+    ord('a'):         robot.openback,
+    ord('s'):         robot.closeback,
+    ord('k'):         robot.stop,
     }
 
 def main(window):
     next_key = None
     while True:
-        robot.storeData()
+        # robot.storeData()
         curses.halfdelay(1)
         if next_key is None:
             key = window.getch()
