@@ -1,5 +1,5 @@
-# climber
-Climbing robot teleoperation and data capturing code
+# Climber
+Climbing robot teleoperation and data capturing code, for a climbing robot which uses 5 Dynamixel servos and 2 Analogue servos. The code is glueware that uses the 'easy dynamixel helper' (https://github.com/ryul1206/easy-dynamixel-helper) library to teleoperate the robot using a keyboard and terminal window.  
 
 Keyboard.py allows you to control the robot with keyboard presses via terminal. Arrow keys drive the robot, 'K' stops movement. the A/S keys and Z/X keys open and close the front and back legs.
 
